@@ -41,6 +41,9 @@ int main(int argc, char **argv)
         locator = argv[1];
     }
 
+    // TODO(esteve): uncomment
+    (void)locator;
+
     //     z_vec_t ps = z_vec_make(2);
     //     z_vec_append(&ps, zn_property_make_from_str(ZN_USER_KEY, "user"));
     //     z_vec_append(&ps, zn_property_make_from_str(ZN_PASSWD_KEY, "password"));

@@ -50,6 +50,9 @@ int main(int argc, char **argv)
         locator = argv[2];
     }
 
+    // TODO(esteve): uncomment
+    (void)locator;
+
     // printf("Openning session...\n");
     // zn_session_p_result_t r_z = zn_open(locator, 0, 0);
     // ASSERT_RESULT(r_z, "Unable to open session.\n")

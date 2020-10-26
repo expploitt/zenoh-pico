@@ -295,7 +295,7 @@ z_timestamp_t gen_timestamp()
 void assert_eq_timestamp(z_timestamp_t *left, z_timestamp_t *right)
 {
     printf("Timestamp -> ");
-    printf("Time (%llu:%llu), ", left->time, right->time);
+    printf("Time (%lu:%lu), ", left->time, right->time);
     assert(left->time == right->time);
 
     printf("ID (");
