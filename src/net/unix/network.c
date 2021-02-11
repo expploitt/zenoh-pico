@@ -14,7 +14,11 @@
 
 #include <arpa/inet.h>
 #include <errno.h>
-#include <ifaddrs.h>
+//#include <ifaddrs.h>
+
+#include <sys/types.h>
+#include <sys/socket.h>
+
 #include <netdb.h>
 #include <net/if.h>
 #include <stdint.h>
