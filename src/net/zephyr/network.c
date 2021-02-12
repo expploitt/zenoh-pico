@@ -32,6 +32,8 @@
 char *_zn_select_scout_iface()
 {
     // @TODO: improve network interface selection
+    // NOTE(esteve): use zephyr net_if_foreach to iterate over network interfaces
+    // https://docs.zephyrproject.org/latest/reference/networking/net_if.html#c.net_if_foreach
     char *eth_prefix = "en";
     char *lo_prefix = "lo";
     size_t len = 2;
