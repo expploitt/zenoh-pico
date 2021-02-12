@@ -26,6 +26,7 @@ message(STATUS "Building in ${CMAKE_BUILD_TYPE} mode")
 
 option (PACKAGING "Use option on Linux to produce Debian and RPM packages." OFF)
 option (UNIX_TARGET "Use this for Linux, Macos, etc." ON)
+option (ZEPHYR_TARGET "Use this for Zephyr" OFF)
 option (CONTIKI "Use this for Contiki Cross compilation." OFF)
 option (TESTS "Use this to also build the tests." ON)
 option (EXAMPLES "Use this to also build the examples." ON)
@@ -122,8 +123,16 @@ else()
 endif()
 
 
+file(GLOB Sources "src/*.c" "src/net/*.c")
+
 if (UNIX_TARGET)
-  file(GLOB Sources "src/*.c" "src/net/*.c" "src/net/unix/*.c")
+  file(GLOB Platform_Sources "src/net/unix/*.c")
+  list(APPEND Sources ${Platform_Sources})
+elseif (ZEPHYR_TARGET)
+  file(GLOB Platform_Sources "src/net/zephyr/*.c")
+  list(APPEND Sources ${Platform_Sources})
+else()
+  message(FATAL_ERROR "Please set UNIX_TARGET or ZEPHYR_TARGET")
 endif()
 
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/libs)
