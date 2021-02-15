@@ -28,6 +28,9 @@
 #include "zenoh-pico/net/private/system.h"
 #include "zenoh-pico/private/logging.h"
 
+void net_if_iterator_func(struct net_if *iface, void *user_data)
+{};
+
 /*------------------ Interfaces and sockets ------------------*/
 char *_zn_select_scout_iface()
 {
@@ -43,6 +46,11 @@ char *_zn_select_scout_iface()
     struct ifaddrs *current;
     char host[NI_MAXHOST];
 
+    net_if_foreach(net_if_iterator_func, NULL);
+
+    return 0;
+
+    /*
     if (getifaddrs(&ifap) == -1)
     {
         return 0;
@@ -88,6 +96,7 @@ char *_zn_select_scout_iface()
     char *result = strdup((iface != 0) ? iface : loopback);
     freeifaddrs(ifap);
     return result;
+    */
 }
 
 struct sockaddr_in *_zn_make_socket_address(const char *addr, int port)
