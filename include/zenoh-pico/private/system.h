@@ -15,6 +15,8 @@
 #ifndef _ZENOH_PICO_SYSTEM_H
 #define _ZENOH_PICO_SYSTEM_H
 
+#include <time.h>
+
 #if (ZENOH_LINUX == 1) || (ZENOH_MACOS == 1)
 #include "zenoh-pico/private/system/unix.h"
 #elif (ZENOH_CONTIKI == 1)

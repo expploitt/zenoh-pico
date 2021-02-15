@@ -15,7 +15,7 @@
 #ifndef _ZENOH_PICO_UNIX_TYPES_H
 #define _ZENOH_PICO_UNIX_TYPES_H
 
-//#include <posix/pthread.h>
+#include <posix/pthread.h>
 
 typedef pthread_t _z_task_t;
 typedef pthread_attr_t _z_task_attr_t;
