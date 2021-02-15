@@ -5,6 +5,7 @@
         "-DTESTS=OFF",
         "-DEXAMPLES=OFF",
         "-DCONTIKI=OFF",
-        "-DUNIX_TARGET=ON",
+        "-DUNIX_TARGET=OFF",
+        "-DZEPHYR_TARGET=ON",
     ],
 }
