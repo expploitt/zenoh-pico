@@ -165,6 +165,8 @@ _zn_socket_result_t _zn_create_udp_socket(const char *addr, int port, int timeou
         return r;
     }
 
+    // NOTE(esteve): SO_SNDTIMEO not supported in Zephyr
+/*
     if (setsockopt(r.value.socket, SOL_SOCKET, SO_SNDTIMEO, (void *)&timeout, sizeof(struct timeval)) == -1)
     {
         r.tag = _z_res_t_ERR;
@@ -173,7 +175,7 @@ _zn_socket_result_t _zn_create_udp_socket(const char *addr, int port, int timeou
         r.value.socket = 0;
         return r;
     }
-
+*/
     return r;
 }
 
