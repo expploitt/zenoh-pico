@@ -26,7 +26,7 @@
 #elif (ZENOH_CONTIKI == 1)
 #include "zenoh-pico/net/private/contiki/types.h"
 #elif (ZENOH_ZEPHYR == 1)
-#include "zenoh-pico/net/private/contiki/types.h"
+#include "zenoh-pico/net/private/system/zephyr.h"
 #endif
 
 /**

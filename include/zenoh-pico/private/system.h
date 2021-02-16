@@ -21,6 +21,8 @@
 #include "zenoh-pico/private/system/unix.h"
 #elif (ZENOH_CONTIKI == 1)
 #include "zenoh-pico/private/contiki/types.h"
+#elif (ZENOH_ZEPHYR == 1)
+#include "zenoh-pico/private/system/zephyr.h"
 #endif
 
 /*------------------ Thread ------------------*/
