@@ -12,7 +12,7 @@
  *   ADLINK zenoh team, <zenoh@adlink-labs.tech>
  */
 
-#include <pthread.h>
+#include <zephyr.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include "zenoh-pico/net/private/system.h"
