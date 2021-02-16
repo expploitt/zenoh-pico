@@ -224,6 +224,8 @@ _zn_socket_result_t _zn_open_tx_session(const char *locator)
         return r;
     }
 
+    // NOTE(esteve): SO_KEEPALIVE and SO_LINGER not support in Zephyr
+/*
     int flags = 1;
     if (setsockopt(r.value.socket, SOL_SOCKET, SO_KEEPALIVE, (void *)&flags, sizeof(flags)) == -1)
     {
@@ -245,6 +247,7 @@ _zn_socket_result_t _zn_open_tx_session(const char *locator)
         r.value.socket = 0;
         return r;
     }
+*/
 
 #if (ZENOH_MACOS == 1)
     setsockopt(r.value.socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)0, sizeof(int));
