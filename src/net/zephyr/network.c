@@ -28,8 +28,20 @@
 #include "zenoh-pico/net/private/system.h"
 #include "zenoh-pico/private/logging.h"
 
+typedef struct {
+    struct net_if * iface;
+} iface_info_t;
+
 void net_if_iterator_func(struct net_if *iface, void *user_data)
-{};
+{
+    struct iface_info_t * iface_info = user_data;
+
+    if (iface_info->iface == NULL)
+    {
+        iface_info->iface = iface;
+    }
+
+};
 
 /*------------------ Interfaces and sockets ------------------*/
 char *_zn_select_scout_iface()
@@ -46,7 +58,24 @@ char *_zn_select_scout_iface()
     struct ifaddrs *current;
     char host[NI_MAXHOST];
 
-    net_if_foreach(net_if_iterator_func, NULL);
+    iface_info_t iface_info;
+    iface_info.iface = NULL;
+
+    net_if_foreach(net_if_iterator_func, &iface_info);
+
+    if (iface_info.iface != NULL)
+    {
+        struct net_addr addr = iface_info.iface->config.ip->ipv4.unicast.address;
+        struct sockaddr_in sa = { .sin_family = addr.family, .sin_addr = addr.in_addr };
+
+        getnameinfo(sa,
+            sizeof(struct sockaddr_in),
+            host, NI_MAXHOST,
+            NULL, 0, NI_NUMERICHOST);
+
+        char *result = strdup(host);
+        return result;
+    }
 
     return 0;
 
