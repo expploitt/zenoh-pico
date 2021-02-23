@@ -41,7 +41,7 @@ void net_if_iterator_func(struct net_if *iface, void *user_data)
         iface_info->iface = iface;
     }
 
-};
+}
 
 /*------------------ Interfaces and sockets ------------------*/
 char *_zn_select_scout_iface()
@@ -65,10 +65,7 @@ char *_zn_select_scout_iface()
 
     if (iface_info.iface != NULL)
     {
-        struct net_if iface = iface_info.iface;
-        struct net_if_config config = iface->config;
-        struct net_if_ip config_ip = config.ip;
-        struct net_addr addr = config_ip->ipv4.unicast.address;
+        struct net_addr addr = iface_info.iface->config.ip.ipv4->unicast->address;
         struct sockaddr_in sa = { .sin_family = addr.family, .sin_addr = addr.in_addr };
 
         getnameinfo(&sa,
