@@ -34,7 +34,7 @@ typedef struct {
 
 void net_if_iterator_func(struct net_if *iface, void *user_data)
 {
-    struct iface_info_t * iface_info = user_data;
+    iface_info_t * iface_info = user_data;
 
     if (iface_info->iface == NULL)
     {
@@ -65,10 +65,10 @@ char *_zn_select_scout_iface()
 
     if (iface_info.iface != NULL)
     {
-        struct net_addr addr = iface_info.iface->config.ip->ipv4.unicast.address;
+        struct net_addr addr = iface_info.iface->config.ip.ipv4.unicast.address;
         struct sockaddr_in sa = { .sin_family = addr.family, .sin_addr = addr.in_addr };
 
-        getnameinfo(sa,
+        getnameinfo(&sa,
             sizeof(struct sockaddr_in),
             host, NI_MAXHOST,
             NULL, 0, NI_NUMERICHOST);
