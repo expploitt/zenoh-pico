@@ -65,7 +65,7 @@ char *_zn_select_scout_iface()
 
     if (iface_info.iface != NULL)
     {
-        struct net_addr addr = iface_info.iface->config.ip.ipv4.unicast.address;
+        struct net_addr addr = iface_info.iface->config.ip->ipv4.unicast.address;
         struct sockaddr_in sa = { .sin_family = addr.family, .sin_addr = addr.in_addr };
 
         getnameinfo(&sa,
