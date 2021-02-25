@@ -12,6 +12,7 @@
  *   ADLINK zenoh team, <zenoh@adlink-labs.tech>
  */
 
+#include <posix/sys/time.h>
 #include <posix/arpa/inet.h>
 #include <errno.h>
 #include <net/net_if.h>
