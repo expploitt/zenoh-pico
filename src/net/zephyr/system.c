@@ -13,8 +13,8 @@
  */
 
 #include <zephyr.h>
-#include <sys/time.h>
-#include <unistd.h>
+#include <posix/sys/time.h>
+#include <posix/unistd.h>
 #include "zenoh-pico/net/private/system.h"
 
 /*------------------ Task ------------------*/

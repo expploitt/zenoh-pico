@@ -17,15 +17,18 @@
 
 #if (ZENOH_LINUX == 1) || (ZENOH_MACOS == 1)
 #include "zenoh-pico/net/private/system/unix.h"
+#include <netinet/in.h>
 #elif (ZENOH_CONTIKI == 1)
 #include "zenoh-pico/net/private/contiki/types.h"
+#include <netinet/in.h>
 #elif (ZENOH_ZEPHYR == 1)
 #include "zenoh-pico/net/private/system/zephyr.h"
+#include <posix/netinet/in.h>
 #endif
 
 /*------------------ Network ------------------*/
 // @TODO: remove the platform-specific include and data types
-#include <netinet/in.h>
+
 #include "zenoh-pico/net/private/result.h"
 
 _ZN_RESULT_DECLARE(_zn_socket_t, socket)

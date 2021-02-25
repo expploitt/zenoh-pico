@@ -12,19 +12,19 @@
  *   ADLINK zenoh team, <zenoh@adlink-labs.tech>
  */
 
-#include <arpa/inet.h>
+#include <posix/arpa/inet.h>
 #include <errno.h>
 #include <net/net_if.h>
 
 #include <sys/types.h>
-#include <sys/socket.h>
+#include <posix/sys/socket.h>
 
-#include <netdb.h>
-#include <net/if.h>
+#include <posix/netdb.h>
+#include <posix/net/if.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <posix/unistd.h>
 #include "zenoh-pico/net/private/system.h"
 #include "zenoh-pico/private/logging.h"
 
@@ -185,14 +185,14 @@ _zn_socket_result_t _zn_create_udp_socket(const char *addr, int port, int timeou
     struct timeval timeout;
     timeout.tv_sec = 0;
     timeout.tv_usec = timeout_usec;
-    if (setsockopt(r.value.socket, SOL_SOCKET, SO_RCVTIMEO, (void *)&timeout, sizeof(struct timeval)) == -1)
+    /*if (setsockopt(r.value.socket, SOL_SOCKET, SO_RCVTIMEO, (void *)&timeout, sizeof(struct timeval)) == -1)
     {
         r.tag = _z_res_t_ERR;
         r.value.error = errno;
         close(r.value.socket);
         r.value.socket = 0;
         return r;
-    }
+    }*/
 
     // NOTE(esteve): SO_SNDTIMEO not supported in Zephyr
 /*

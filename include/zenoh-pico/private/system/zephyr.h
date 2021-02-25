@@ -15,7 +15,7 @@
 #ifndef _ZENOH_PICO_UNIX_ZEPHYR_H
 #define _ZENOH_PICO_UNIX_ZEPHYR_H
 
-#include <zephyr.h>
+#include <posix/pthread.h>
 
 typedef pthread_t _z_task_t;
 typedef pthread_attr_t _z_task_attr_t;
@@ -24,5 +24,7 @@ typedef pthread_cond_t _z_condvar_t;
 
 typedef struct timespec _z_clock_t;
 typedef struct timeval _z_time_t;
+
+typedef clockid_t clock_t;
 
 #endif /* _ZENOH_PICO_UNIX_ZEPHYR_H_ */
