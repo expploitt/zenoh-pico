@@ -14,6 +14,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "zenoh-pico/net.h"
 #include "zenoh-pico/net/private/internal.h"
 #include "zenoh-pico/net/private/msgcodec.h"

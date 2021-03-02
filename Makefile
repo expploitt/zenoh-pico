@@ -1,105 +1,54 @@
-#
-# Copyright (c) 2017, 2020 ADLINK Technology Inc.
-#
-# This program and the accompanying materials are made available under the
-# terms of the Eclipse Public License 2.0 which is available at
-# http://www.eclipse.org/legal/epl-2.0, or the Apache License, Version 2.0
-# which is available at https://www.apache.org/licenses/LICENSE-2.0.
-#
-# SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
-#
-# Contributors:
-#   ADLINK zenoh team, <zenoh@adlink-labs.tech>
-#
-.PHONY: test clean
+# #
+# # Copyright (c) 2017, 2020 ADLINK Technology Inc.
+# #
+# # This program and the accompanying materials are made available under the
+# # terms of the Eclipse Public License 2.0 which is available at
+# # http://www.eclipse.org/legal/epl-2.0, or the Apache License, Version 2.0
+# # which is available at https://www.apache.org/licenses/LICENSE-2.0.
 
-# Build type. This set the CMAKE_BUILD_TYPE variable.
-# Accepted values: Release, Debug, GCov
-BUILD_TYPE?=Release
 
-# zenoh-pico/ directory
-ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+PREFIX ?= .
+OBJ_DIR ?= $(PREFIX)/obj
+OBJ_DIR2 ?= $(PREFIX)/obj/net
+OBJ_DIR3 ?= $(PREFIX)/obj/net/unix
 
-# Build directory
-BUILD_DIR=build
+LIB_DIR ?= $(PREFIX)/lib
 
-# Crossbuild directory
-CROSSBUILD_TARGETS=linux-armv5 linux-armv6 linux-armv7 linux-armv7a linux-arm64 linux-mips linux-x86 linux-x64
-CROSSBUILD_DIR=crossbuilds
-CROSSIMG_PREFIX=zenoh-pico_
-# NOTES:
-# - ARM:   old versions of dockcross/dockcross were creating some issues since they used an old GCC (4.8.3) which lacks <stdatomic.h> (even using -std=gnu11)
-
-ifneq ($(ZENOH_DEBUG),)
-	ZENOH_DEBUG_OPT := -DZENOH_DEBUG=$(ZENOH_DEBUG)
-endif
-
-CMAKE_OPT=$(ZENOH_DEBUG_OPT) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -H.
-
-# ZENOH_JAVA: when building zenoh-pico for zenoh-java:
-ifneq ($(ZENOH_JAVA),)
-	CMAKE_OPT += -DSWIG_JAVA=ON -DTESTS=OFF -DEXAMPLES=OFF
-endif
-ifneq ($(JNI_INCLUDE_HOME),)
-	CMAKE_OPT += -DJNI_INCLUDE_HOME=$(JNI_INCLUDE_HOME)
-endif
-
-all: make
-
-$(BUILD_DIR)/Makefile: CMakeLists.txt
-	mkdir -p $(BUILD_DIR)
-	cmake $(CMAKE_OPT) -B$(BUILD_DIR)
-
-make: $(BUILD_DIR)/Makefile
-	make -C$(BUILD_DIR)
-
-install: $(BUILD_DIR)/Makefile
-	make -C$(BUILD_DIR) install
-
-test: $(BUILD_DIR)/Makefile
-	make -C$(BUILD_DIR) test
-
-crossbuilds: $(CROSSBUILD_TARGETS)
-
-DOCKER_OK := $(shell docker version 2> /dev/null)
-check-docker:
-ifndef DOCKER_OK
-	$(error "Docker is not available. Please install Docker")
-endif
-
-crossbuild: check-docker
-	@echo "FROM dockcross/$(CROSSIMG)\nRUN apt-get update && apt-get -y install rpm" | docker build -t $(CROSSIMG_PREFIX)$(CROSSIMG) -
-	docker run --rm -v $(ROOT_DIR):/workdir -w /workdir $(CROSSIMG_PREFIX)$(CROSSIMG) bash -c "\
-		cmake $(CMAKE_OPT) -DPACKAGING=DEB,RPM -DDEBARCH=$(DEBARCH) -DRPMARCH=$(RPMARCH) -B$(CROSSBUILD_DIR)/$(CROSSIMG) && \
-		make VERBOSE=1 -C$(CROSSBUILD_DIR)/$(CROSSIMG) all package"
-	docker rmi $(CROSSIMG_PREFIX)$(CROSSIMG)
-	docker rmi dockcross/$(CROSSIMG)
-
-linux-armv5: 
-	CROSSIMG=$@ DEBARCH=arm RPMARCH=arm make crossbuild
-
-linux-armv6: 
-	CROSSIMG=$@ DEBARCH=arm RPMARCH=arm make crossbuild
-
-linux-armv7: 
-	CROSSIMG=$@ DEBARCH=armhf RPMARCH=armhf make crossbuild
-
-linux-armv7a: 
-	CROSSIMG=$@ DEBARCH=armhf RPMARCH=armhf make crossbuild
-
-linux-arm64: 
-	CROSSIMG=$@ DEBARCH=arm64 RPMARCH=aarch64 make crossbuild
-
-linux-mips: 
-	CROSSIMG=$@ DEBARCH=mips RPMARCH=mips make crossbuild
-
-linux-x86:
-	CROSSIMG=$@ DEBARCH=i386 RPMARCH=x86 make crossbuild
-
-linux-x64: 
-	CROSSIMG=$@ DEBARCH=amd64 RPMARCH=x86_64 make crossbuild
+BUILD_FLAGS ?= -DZENOH_ZEPHYR=1 -DZENOH_DEBUG=2 #-DCONFIG_NETWORKING=y -DCONFIG_NET_SOCKETS=y -DCONFIG_PTHREAD_IPC=y -DCONFIG_NET_SOCKETS_POSIX_NAMES=y 
+all:
+	mkdir -p $(OBJ_DIR) $(LIB_DIR)
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/codec.c -o $(OBJ_DIR)/codec.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/collection.c -o $(OBJ_DIR)/collection.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/iobuf.c -o $(OBJ_DIR)/iobuf.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/utils.c -o $(OBJ_DIR)/utils.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/net/codec.c -o $(OBJ_DIR)/codec2.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/net/internal.c -o $(OBJ_DIR)/internal.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/net/lease_task.c -o $(OBJ_DIR)/lease_task.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/net/msgcodec.c -o $(OBJ_DIR)/msgcodec.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/net/property.c -o $(OBJ_DIR)/property.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/net/read_task.c -o $(OBJ_DIR)/read_task.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/net/rname.c -o $(OBJ_DIR)/rname.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/net/session.c -o $(OBJ_DIR)/session.o
+	#$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/net/unix/network.c -o $(OBJ_DIR)/network.o
+	#$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/net/unix/system.c -o $(OBJ_DIR)/system.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/net/zephyr/network.c -o $(OBJ_DIR)/network.o
+	$(CC) -c $(CFLAGS) ${BUILD_FLAGS} -MD -Iinclude src/net/zephyr/system.c -o $(OBJ_DIR)/system.o
+	#$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/codec.o $(OBJ_DIR)/collection.o $(OBJ_DIR)/iobuf.o $(OBJ_DIR)/utils.o $(OBJ_DIR)/codec.o $(OBJ_DIR)/internal.o $(OBJ_DIR)/lease_task.o $(OBJ_DIR)/msgcodec.o $(OBJ_DIR)/property.o $(OBJ_DIR)/rname.o $(OBJ_DIR)/session.o $(OBJ_DIR)/network.o $(OBJ_DIR)/system.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/codec.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/collection.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/iobuf.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/utils.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/codec2.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/internal.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/lease_task.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/msgcodec.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/property.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/read_task.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/rname.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/session.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/network.o
+	$(AR) -rcs $(LIB_DIR)/libzenohpicolib.a $(OBJ_DIR)/system.o
 
 
 clean:
-	rm -fr $(BUILD_DIR)
-	rm -rf $(CROSSBUILD_DIR)
+	rm -rf $(OBJ_DIR) $(LIB_DIR)

@@ -70,7 +70,7 @@ char *_zn_select_scout_iface()
         struct net_addr addr = iface_info.iface->config.ip.ipv4->unicast->address;
         struct sockaddr_in sa = { .sin_family = addr.family, .sin_addr = addr.in_addr };
 
-        getnameinfo(&sa,
+        getnameinfo((const struct sockaddr*)&sa,
             sizeof(struct sockaddr_in),
             host, NI_MAXHOST,
             NULL, 0, NI_NUMERICHOST);
@@ -187,15 +187,15 @@ _zn_socket_result_t _zn_create_udp_socket(const char *addr, int port, int timeou
     struct timeval timeout;
     timeout.tv_sec = 0;
     timeout.tv_usec = timeout_usec;
-    /*if (setsockopt(r.value.socket, SOL_SOCKET, SO_RCVTIMEO, (void *)&timeout, sizeof(struct timeval)) == -1)
+    if (setsockopt(r.value.socket, SOL_SOCKET, SO_RCVTIMEO, (void *)&timeout, sizeof(struct timeval)) == -1)
     {
         r.tag = _z_res_t_ERR;
         r.value.error = errno;
         close(r.value.socket);
         r.value.socket = 0;
         return r;
-    }*/
-
+    }
+    
     // NOTE(esteve): SO_SNDTIMEO not supported in Zephyr
 /*
     if (setsockopt(r.value.socket, SOL_SOCKET, SO_SNDTIMEO, (void *)&timeout, sizeof(struct timeval)) == -1)
